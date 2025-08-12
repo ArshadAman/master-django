@@ -1,0 +1,4 @@
+# Daily Notes
+
+## Day 1 Learning Note
+Today, I explored the Django request lifecycle, tracing how a request flows from a web server through middleware to the view. The hands-on benchmark vividly showed the power of ASGI over WSGI. Running a simple app on Gunicorn (sync) resulted in a request pile-up under load, while Uvicorn (async) handled concurrent I/O-bound tasks effortlessly, maintaining low latency. This practical test clarified the huge performance gains of an asynchronous worker model for scalable applications. I also got a clear understanding of how middleware works via the __init__ (setup) and __call__ (per-request) methods.
