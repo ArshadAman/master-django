@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "lifecycle_demo",
+    'url_internals',
 ]
 
 MIDDLEWARE = [
