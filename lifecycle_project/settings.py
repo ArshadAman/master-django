@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "lifecycle_demo",
     'url_internals',
+    'view_internals',
 ]
 
 MIDDLEWARE = [

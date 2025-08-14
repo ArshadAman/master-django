@@ -1,12 +1,13 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from lifecycle_demo.views import home_view
 from django.urls import resolve
 import timeit
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home_view, name='home')
+    path('', home_view, name='home'),
+    path('view/', include('view_internals.urls')),
 ]
 
 for i in range(5000):
