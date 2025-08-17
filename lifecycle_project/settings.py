@@ -29,9 +29,14 @@ INSTALLED_APPS = [
     "lifecycle_demo",
     'url_internals',
     'view_internals',
+    'middleware_internals',
+    'app_startup.apps.AppStartupConfig',
 ]
 
 MIDDLEWARE = [
+    'middleware_internals.middleware.RequestTimingMiddleware',
+    'middleware_internals.middleware.SimpleAuthMiddleware',
+    'middleware_internals.middleware.RateLimitHeaderMiddleware',
     "lifecycle_demo.middleware.LifecycleLoggerMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
