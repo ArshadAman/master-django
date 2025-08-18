@@ -74,3 +74,30 @@ The ready() method is like a final inspection. It's a signal that all the core s
 This is the official, guaranteed-safe place to run your startup code, like warming up a cache or connecting signals.
 
 Here's the key takeaway and a pro-tip for scaling: While ready() is perfect for lightweight tasks, avoid running heavy, time-consuming operations in it. In a production environment with multiple servers, that heavy task would run on every single server when they start. The professional approach is to move that logic into a one-time "init job" that prepares resources before your main application even starts.
+
+
+## Day 6 Learning Note (Teaching Style)
+Let's talk about a common task that can secretly crash your server: exporting large data files.
+
+Imagine a user wants to download a CSV with 100,000 rows. The typical approach is to generate the entire file in memory as one giant string and then return it in an HttpResponse. This is like filling a massive bucket with water before handing it over. If the bucket is too big (the file is too large), it will overflow your server's memory and bring it crashing down.
+
+There's a much smarter, more scalable way: streaming.
+
+By using Django's StreamingHttpResponse, you can turn on a faucet instead. You create a generator in Python that creates the CSV data one row at a time. StreamingHttpResponse then sends each row to the user the moment it's created.
+
+Here's the impact:
+
+Memory Usage: Stays incredibly low and flat, no matter if you're sending 100 rows or 10 million.
+
+User Experience: The user starts receiving data immediately, instead of waiting for a long, frozen loading screen while your server struggles to build the file.
+
+The lesson is simple: for any large data export, stream it. Don't build it. It’s a fundamental pattern for writing robust, production-ready Django applications that can handle data at scale.
+
+### Scaling Notes
+Use streaming for huge exports to avoid worker memory spikes: This is the main takeaway. If you had tried to generate a 100,000-row CSV string in memory, your server's RAM usage would have skyrocketed, potentially crashing the worker process and making it unable to handle other requests. StreamingHttpResponse keeps memory usage flat and predictable.
+
+Tune timeouts and gateway buffers (nginx): A streaming response can take a long time to complete (in our example, 10 seconds). Production servers like Gunicorn and proxy servers like Nginx have timeouts.
+
+Gunicorn: Has a --timeout setting (default 30s). If your view takes longer than this to yield a piece of data, Gunicorn will kill the worker. You may need to increase this for slow streams.
+
+Nginx: Has settings like proxy_read_timeout. If Nginx doesn't receive any data from Django for a certain period, it will close the connection. You may also want to use proxy_buffering off; for streaming endpoints to ensure Nginx sends data to the client as soon as it receives it from Django, rather than waiting to fill a buffer.

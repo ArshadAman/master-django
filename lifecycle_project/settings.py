@@ -31,12 +31,13 @@ INSTALLED_APPS = [
     'view_internals',
     'middleware_internals',
     'app_startup.apps.AppStartupConfig',
+    'streaming_demo',
 ]
 
 MIDDLEWARE = [
-    'middleware_internals.middleware.RequestTimingMiddleware',
-    'middleware_internals.middleware.SimpleAuthMiddleware',
-    'middleware_internals.middleware.RateLimitHeaderMiddleware',
+    # 'middleware_internals.middleware.RequestTimingMiddleware',
+    # 'middleware_internals.middleware.SimpleAuthMiddleware',
+    # 'middleware_internals.middleware.RateLimitHeaderMiddleware',
     "lifecycle_demo.middleware.LifecycleLoggerMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
