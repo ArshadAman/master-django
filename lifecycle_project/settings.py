@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'middleware_internals',
     'app_startup.apps.AppStartupConfig',
     'streaming_demo',
+    'orm_internals',
 ]
 
 MIDDLEWARE = [
