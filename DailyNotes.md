@@ -169,3 +169,37 @@ The Solution: Partitioning splits one huge logical table into smaller physical t
 The Result: When you query for events in a specific month, the database is smart enough to scan only that small, relevant partition. It’s like looking for a book in the correct chapter instead of searching the entire library.
 
 Understanding these patterns is key to building applications that are not just functional, but truly scalable.
+
+
+## Title: The #1 Performance Killer in Django (and How to Fix It)
+Let's talk about the most common performance bottleneck I see in Django apps: the N+1 query problem. Understanding this is a rite of passage for any serious Django developer.
+
+Imagine you need to make a salad. You go to the grocery store and buy lettuce (1 trip). When you get home, you realize you need tomatoes, so you go back to the store (+N trips). Then you realize you need cucumbers, so you go back again (+N trips). It's incredibly inefficient.
+
+This is what happens when your code does this:
+
+articles = Article.objects.all() # <-- 1 trip to the DB
+for article in articles:
+  print(article.author.name) # <-- N extra trips to the DB
+
+You're making one trip for the articles, and then a separate, new trip for every single author. This floods your database with small, unnecessary queries and grinds your application to a halt.
+
+The solution is to give Django your full shopping list upfront:
+
+select_related('author'): Use this for single items (like an article's one author). It tells Django, "When you get the lettuce, also grab the tomatoes." It uses a SQL JOIN to get everything in one go.
+
+prefetch_related('tags'): Use this for multiple items (like an article's many tags). It's smarter. It says, "Get all the lettuce, then make a second, separate trip to get all the other vegetables I need." It fetches the related items in a second query using WHERE id IN (...).
+
+By using these tools, you can reduce your query count from N+1 to a constant, small number (usually just 2), making your application dramatically faster.
+
+
+## Scaling Notes
+
+Use select_related for one-to-one/foreignkey: This is the most efficient way to handle forward relationships, as it's a single SQL JOIN. 
+
+Use prefetch_related for many-to-many/reverse: This is crucial for relationships that can return multiple objects. Using a 
+
+JOIN here could result in a huge amount of duplicated data being sent from the database to your application. 
+
+Watch for join explosion and memory: While select_related is efficient, be careful not to create overly complex joins across many tables (select_related('author__profile__company')). This can make the single query very slow. prefetch_related uses more queries but can often be lighter on the database and use less memory in your application because it doesn't duplicate parent object data.
+
