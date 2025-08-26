@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'app_startup.apps.AppStartupConfig',
     'streaming_demo',
     'orm_internals',
+    'custom_fields',
 ]
 
 MIDDLEWARE = [
@@ -121,3 +122,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+FERNET_KEY=b'FbEVrbU3nVDuKgbzVBld1wke89cl-44vqQdywhvIDPM='
