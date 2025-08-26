@@ -203,3 +203,25 @@ JOIN here could result in a huge amount of duplicated data being sent from the d
 
 Watch for join explosion and memory: While select_related is efficient, be careful not to create overly complex joins across many tables (select_related('author__profile__company')). This can make the single query very slow. prefetch_related uses more queries but can often be lighter on the database and use less memory in your application because it doesn't duplicate parent object data.
 
+
+Of course. Here is the daily learning note for Day 10, combining the main lesson with the scaling notes.
+
+## Hacking Django's ORM: Building Your Own Field Types 🛠️
+Ever wanted to change how Django saves data to the database? You can, by creating your own custom model fields. Today, I built an EncryptedTextField to see how it works.
+
+Think of a Django model field (CharField, IntegerField, etc.) as a translator. It knows how to convert a Python object (like a string or a number) into a format the database understands, and vice-versa.
+
+By subclassing a standard field, you can override its translation methods:
+
+get_prep_value(): This is called when saving data. Here, I took a plain text string and encrypted it before it was sent to the database.
+
+from_db_value(): This is called when loading data. It takes the encrypted gibberish from the database and decrypts it back into a normal Python string.
+
+The final piece of the puzzle is the deconstruct() method. This is a crucial instruction that tells Django's migration framework how to save a snapshot of your custom field, ensuring makemigrations works perfectly.
+
+Pro-Tips for Scaling 📈
+While powerful, custom fields come with performance considerations:
+
+➡️ Efficiency is Key: The logic inside your field's methods runs for every single object instance. Any slow operation (like complex encryption or a network call) will create a major bottleneck. Keep your custom field logic lean and fast.
+
+➡️ Beware of Indexing: You cannot create a useful database index on an encrypted field. The data in the database is random, so you can't filter it with a WHERE clause (e.g., ...WHERE secret_content LIKE '%test%'). You must design your application to only filter on unencrypted, indexable fields.
