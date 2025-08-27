@@ -16,7 +16,7 @@ class AppStartupConfig(AppConfig):
             print("Cache is cold. Warming up now...")
 
             # Similate an expensive operation, like loading data from a file or DB
-            time.sleep(2)
+            time.sleep(0)
             expensive_data = {"user_count": 1000, "version": "1.2.3"}
             APP_CACHE['data'] = expensive_data
             APP_CACHE['is_warmed_up'] = True

@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'streaming_demo',
     'orm_internals',
     'custom_fields',
+    'transactions_demo',
 ]
 
 MIDDLEWARE = [

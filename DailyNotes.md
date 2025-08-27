@@ -225,3 +225,25 @@ While powerful, custom fields come with performance considerations:
 ➡️ Efficiency is Key: The logic inside your field's methods runs for every single object instance. Any slow operation (like complex encryption or a network call) will create a major bottleneck. Keep your custom field logic lean and fast.
 
 ➡️ Beware of Indexing: You cannot create a useful database index on an encrypted field. The data in the database is random, so you can't filter it with a WHERE clause (e.g., ...WHERE secret_content LIKE '%test%'). You must design your application to only filter on unencrypted, indexable fields.
+
+
+
+## Title: Preventing Chaos: How Django's Transactions Protect Your Data 🛡️
+Let's talk about a critical topic for any application that handles concurrent actions: data integrity.
+
+Imagine two people trying to withdraw money from the same bank account at the exact same time. Without proper protection, both could read the initial balance, both could think the withdrawal is valid, and you could end up with a negative balance. This is a race condition.
+
+Django's solution is a powerful combination of two tools:
+
+transaction.atomic(): This is an "all or nothing" wrapper. It ensures that all database operations within its block either succeed together or fail together. If an error occurs, the database is rolled back to its original state, preventing partial, corrupted data.
+
+select_for_update(): This is the real magic for preventing race conditions. It's like giving the first process a key to the bank vault. When you write BankAccount.objects.select_for_update().get(pk=1), you're telling the database, "Lock this row. Nobody else can touch it until my transaction is completely finished."
+
+When a second process tries to access that same locked row, it's forced to wait until the first process is done. This prevents it from reading stale data and ensures operations happen sequentially, not chaotically.
+
+Pro-Tips for Scaling 📈
+💡 Keep Transactions Short: A database lock makes other processes wait. To maximize performance, keep your atomic blocks as short as possible. Do any slow work (like calling an external API) before you start the transaction and acquire the lock.
+
+💡 Consider Optimistic Locking: The select_for_update() method is "pessimistic" (it locks first). For very high-traffic systems, you might look into "optimistic" locking, a pattern where you don't lock but instead check if the data has changed before you save.
+
+Understanding transactions isn't just a feature—it's a fundamental requirement for building robust, reliable applications.
