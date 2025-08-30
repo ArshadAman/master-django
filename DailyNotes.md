@@ -247,3 +247,23 @@ Pro-Tips for Scaling 📈
 💡 Consider Optimistic Locking: The select_for_update() method is "pessimistic" (it locks first). For very high-traffic systems, you might look into "optimistic" locking, a pattern where you don't lock but instead check if the data has changed before you save.
 
 Understanding transactions isn't just a feature—it's a fundamental requirement for building robust, reliable applications.
+
+## The Art of Database Surgery: Zero-Downtime Migrations in Django 👨‍⚕️
+Changing your database schema in a live, running application can be terrifying. It's like performing surgery on a patient who is wide awake. But with the right process, you can do it without your users ever noticing.
+
+Today, I practiced the art of a zero-downtime migration by splitting a full_name column into first_name and last_name. The key is to never break compatibility between your code and your database at any point during a deployment.
+
+This is achieved with a careful, three-step process:
+
+1️⃣ Add, Don't Change: First, you run a schema migration to add the new first_name and last_name columns, making sure they are nullable. This is a non-destructive change. Old code ignores them, new code sees them.
+
+2️⃣ Backfill the Data: Next, you run a data migration using RunPython. This is a script that loops through your existing data, splits the old full_name, and populates the new columns. Your database is now in a consistent state, with both old and new columns populated.
+
+3️⃣ Remove the Old: Finally, once your new application code is deployed and only using the new fields, you can run a final schema migration to remove the old full_name column and make the new ones NOT NULL.
+
+Behind the scenes, Django's Migration Graph tracks the dependencies between each of these steps, ensuring they always run in the correct order.
+
+Pro-Tips for Scaling 📈
+💡 Zero-Downtime is a Process: The multi-step approach is the gold standard for deploying changes to a live database without taking your site offline. Each step must be backward-compatible.
+
+💡 Batch Your Backfills: The RunPython script we wrote processes the whole table at once. On a table with millions of rows, this would lock the table for a long time. For large datasets, write a custom management command that backfills the data in small, manageable batches to avoid long-running transactions.

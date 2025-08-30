@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'orm_internals',
     'custom_fields',
     'transactions_demo',
+    'migrations_demo',
 ]
 
 MIDDLEWARE = [
