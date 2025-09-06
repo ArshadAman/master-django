@@ -267,3 +267,31 @@ Pro-Tips for Scaling 📈
 💡 Zero-Downtime is a Process: The multi-step approach is the gold standard for deploying changes to a live database without taking your site offline. Each step must be backward-compatible.
 
 💡 Batch Your Backfills: The RunPython script we wrote processes the whole table at once. On a table with millions of rows, this would lock the table for a long time. For large datasets, write a custom management command that backfills the data in small, manageable batches to avoid long-running transactions.
+
+
+Of course. Here is the daily learning note for Day 14, combining all the concepts we discussed.
+
+---
+### **Title: Django Signals: The Hidden Magic That Can Burn You 🔥**
+
+Django's signals are a powerful feature for decoupling parts of your application. They let you say, "When X happens, I want Y to run," without X and Y ever knowing about each other.
+
+Think of a `post_save` signal as a smart doorbell 🔔 on your `Product` model. Every time a product is saved—no matter who or what code saves it—the doorbell rings, and your signal receiver function runs.
+
+This is powerful, but it's also where the danger lies.
+
+#### **The Problem: Implicit vs. Explicit**
+
+* **Explicit Code (A Service Function):** The logic is clear. You can read the function and see every single step it performs. It's a detailed instruction manual.
+* **Implicit Code (A Signal):** The action is hidden. A simple `.save()` call can trigger a cascade of invisible functions. A new developer might have no idea that saving a product also sends an email, updates a cache, and calls an external API.
+
+This "spooky action at a distance" can make your application incredibly hard to debug and reason about, especially as it grows.
+
+---
+### **Pro-Tips for Scaling 📈**
+
+💡 **Signals Hide Costs:** The biggest scaling trap is connecting a slow function (like a network call or complex database query) to a frequently-fired signal like `post_save`. This will secretly slow down every single save operation for that model.
+
+💡 **Prefer Explicit Orchestration:** For critical business logic, **explicit is better than implicit**. Use a service function that clearly outlines all its steps. You (and your team) can see exactly what's happening just by reading the code. Reserve signals for non-critical tasks or for integrating third-party apps where you can't modify the source code.
+
+Clarity is key to building maintainable, large-scale systems.
