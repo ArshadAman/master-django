@@ -9,6 +9,7 @@ urlpatterns = [
     path('', home_view, name='home'),
     path('view/', include('view_internals.urls')),
     path('data/', include('streaming_demo.urls')),
+    path('forms', include('forms_demo.urls')),
 ]
 
 for i in range(5000):

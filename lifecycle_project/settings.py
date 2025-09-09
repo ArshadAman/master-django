@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'migrations_demo',
     'indexes_demo',
     'signals_demo.apps.SignalsDemoConfig',
+    'forms_demo',
 ]
 
 MIDDLEWARE = [

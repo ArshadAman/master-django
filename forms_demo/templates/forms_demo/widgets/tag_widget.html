@@ -1,0 +1,7 @@
+<div class="tag-container">
+  {% for tag in widget.tags %}
+    <span class="tag">{{ tag }}</span>
+  {% endfor %}
+
+  <input type="text" name="{{ widget.name }}" value="{{ widget.value|join:', ' }}" {% include "django/forms/widgets/attrs.html" %}>
+</div>
