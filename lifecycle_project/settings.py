@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'indexes_demo',
     'signals_demo.apps.SignalsDemoConfig',
     'forms_demo',
+    'template_demo',
 ]
 
 MIDDLEWARE = [

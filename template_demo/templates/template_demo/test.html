@@ -1,0 +1,12 @@
+{% load custom_tags %}
+
+<h1>Template Tag Test</h1>
+
+<p>
+    {% greet current_user.first_name %}
+</p>
+
+
+<p>
+    {% greet non_existent_variable %}
+</p>

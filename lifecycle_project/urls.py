@@ -10,6 +10,7 @@ urlpatterns = [
     path('view/', include('view_internals.urls')),
     path('data/', include('streaming_demo.urls')),
     path('forms', include('forms_demo.urls')),
+    path('template_demo', include('template_demo.urls')),
 ]
 
 for i in range(5000):
