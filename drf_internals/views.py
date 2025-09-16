@@ -45,6 +45,7 @@ class CachedArticleView(APIView):
         
         return response
     
+    # Fetch the details only if it is not in the cache or if the cache has the timeout
     def get(self, request, format=None):
         article_data = list(Article.objects.values('id', 'title', 'views'))
         return Response(article_data)
