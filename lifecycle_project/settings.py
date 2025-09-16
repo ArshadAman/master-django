@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'signals_demo.apps.SignalsDemoConfig',
     'forms_demo',
     'template_demo',
+    'drf_internals',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 FERNET_KEY=b'FbEVrbU3nVDuKgbzVBld1wke89cl-44vqQdywhvIDPM='
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake', # A unique string for this cache instance
+    }
+}
