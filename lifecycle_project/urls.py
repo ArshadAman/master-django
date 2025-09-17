@@ -11,7 +11,7 @@ urlpatterns = [
     path('data/', include('streaming_demo.urls')),
     path('forms', include('forms_demo.urls')),
     path('template_demo', include('template_demo.urls')),
-    path('drf_internals', include('drf_internals.urls')),
+    path('drf_internals/', include('drf_internals.urls')),
 ]
 
 for i in range(5000):

@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .renderers import CSVRenderer
 from orm_internals.models import Article
+from rest_framework.request import Request
+from rest_framework.renderers import JSONRenderer
 
 class ArticleListView(APIView):
     """A View that list articles and supports csv rendering."""
@@ -25,14 +27,25 @@ class CachedArticleView(APIView):
 
     def dispatch(self, request, *args, **kwargs):
         "Define a unique cache key for this request"
-        cache_key = f"article_view_{request.path}_{request.query_params.url_encode()}"
+        params = getattr(request, "query_params", None)
+        qs = params.urlencode() if params is not None else request.GET.urlencode()
+        cache_key = f"article_view_{request.path}_{qs}"
 
         # Try to get the response from the cache
         cached_response_data = cache.get(cache_key)
         
         if cached_response_data:
             print('Cache HIT! Short-circuiting with a cached response')
-            return Response(cached_response_data)
+            drf_request = Request(request)
+            renderer = JSONRenderer()
+            response = Response(cached_response_data)
+            response.accepted_renderer = renderer
+            response.accepted_media_type = renderer.media_type
+            response.renderer_context = {
+                'request': drf_request,
+                'response': response,
+            }
+            return response
         
         print("Cache MISS! Proceeding with the normal dispatch.")
         # If not in cache, proceed with the normal DRF dispatch
