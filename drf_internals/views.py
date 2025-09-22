@@ -62,3 +62,23 @@ class CachedArticleView(APIView):
     def get(self, request, format=None):
         article_data = list(Article.objects.values('id', 'title', 'views'))
         return Response(article_data)
+    
+# Day 19
+from .serializers import BadArticleSerializer, GoodArticleSerializer
+from rest_framework.generics import ListAPIView
+from django.db.models import Count
+
+
+class BadArticleListView(ListAPIView):
+    """Uses the inefficient serializer, causing many queries"""
+    queryset = Article.objects.all()
+    serializer_class = BadArticleSerializer
+
+class GoodArticleListView(ListAPIView):
+    """Uses prefetching and annotations to be effiecient."""
+    # By using select_related, prefetch_related, and annotate,
+    # we provide all the data the serializer needs in one go
+    queryset = Article.objects.select_related('author').annotate(
+        tag_count = Count('tags')
+    )
+    serializer_class = GoodArticleSerializer
