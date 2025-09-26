@@ -82,3 +82,35 @@ class GoodArticleListView(ListAPIView):
         tag_count = Count('tags')
     )
     serializer_class = GoodArticleSerializer
+
+
+# Day 20
+from rest_framework import viewsets
+
+class ArticleViewSet(viewsets.ReadOnlyModelViewSet):
+    """A simple viewset for viewing articles."""
+    serializer_class = GoodArticleSerializer
+    queryset = Article.objects.all() # We will overide this later
+
+
+from .routers import versioned_dispatch
+class VersionedArticleViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = GoodArticleSerializer
+    
+    def get_queryset(self):
+        tenant_id = self.kwargs['tenant_id']
+        print(f"Filtering for tenant: {tenant_id}")
+        return Article.objects.select_related('author').annotate(
+        tag_count = Count('tags')
+    )
+
+    @versioned_dispatch
+    def versioned_list(self, request, *args, **kwargs):
+        """V1 list method."""
+        print("Running V1 of the list method.")
+        return self.list(request, *args, **kwargs)
+
+    def versioned_list_v2(self, request, *args, **kwargs):
+        """V2 list method."""
+        print("Running V2 of the list method.")
+        return self.list(request, *args, **kwargs)
