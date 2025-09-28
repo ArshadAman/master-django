@@ -1,5 +1,5 @@
 # drf_internals/urls.py
-# from django.urls import path
+from django.urls import path
 # from .views import ArticleListView, CachedArticleView, BadArticleListView, GoodArticleListView
 
 # urlpatterns = [

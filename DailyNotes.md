@@ -439,3 +439,21 @@ This not only saves a massive amount of time but also ensures your API follows a
 Pro-Tips for Scaling 📈
 💡 Keep Router Logic Lightweight: The router's logic runs once at server startup to generate all your URL patterns. If you have a very complex custom router, it can measurably slow down your application's startup time and increase its initial memory footprint. Avoid heavy computations or database queries in your router logic.
 
+
+# Title: Beyond Login: The Full Lifecycle of a JWT - day 21 🔑
+Securing an API with token authentication is more than just creating a token at login. For a truly secure system, you need to manage the entire lifecycle of your JSON Web Tokens (JWTs).
+
+Think of your authentication system like a hotel key card system:
+
+The Access Token (The Room Key 🚪): When you log in, you get a short-lived access token. This is like your room key. It's used for all your requests and proves you have access, but it expires quickly (e.g., in 15 minutes) for security. If it's stolen, the damage is limited.
+
+The Refresh Token (The Front Desk Pass 🎟️): Along with the room key, you get a long-lived refresh token. This is your pass to go to the front desk. When your room key expires, you show your pass to the front desk to get a new room key, without needing to show your ID and password all over again.
+
+Token Rotation (New Pass Every Time): The most secure strategy is refresh token rotation. Every time you use your front desk pass to get a new room key, the front desk also gives you a new pass and invalidates the old one. This prevents a stolen pass from being used repeatedly.
+
+Revocation/Logout (The Denylist 🚫): When you check out, the hotel adds your pass to a denylist. A revocation list is crucial for JWTs. Since JWTs are stateless, this is the only way to actively invalidate a token before it expires, ensuring a user is truly logged out.
+
+Pro-Tips for Scaling 📈
+💡 Use Redis for Revocation: The token denylist is checked on every refresh request. Storing this list in your main database can become a bottleneck. The standard solution is to use a fast, in-memory database like Redis for the denylist to ensure this check is nearly instantaneous.
+
+#Django #DjangoRESTFramework #Python #Backend #Security #API #WebDevelopment #SoftwareArchitecture

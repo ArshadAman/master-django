@@ -6,6 +6,9 @@ from .renderers import CSVRenderer
 from orm_internals.models import Article
 from rest_framework.request import Request
 from rest_framework.renderers import JSONRenderer
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 
 class ArticleListView(APIView):
     """A View that list articles and supports csv rendering."""
@@ -114,3 +117,18 @@ class VersionedArticleViewSet(viewsets.ReadOnlyModelViewSet):
         """V2 list method."""
         print("Running V2 of the list method.")
         return self.list(request, *args, **kwargs)
+    
+
+
+# Day 21:
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data['refresh']
+            token = RefreshToken(refresh_token)
+            token.blacklist() # Add the token to the denylist
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
